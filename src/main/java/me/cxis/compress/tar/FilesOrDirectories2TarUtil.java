@@ -15,22 +15,22 @@ import java.util.List;
 
 /**
  * Created by cheng.xi on 11/12/2016.
- * 文件或者文件夹压缩成tar包
+ * 文件或者文件夹归档成tar包
  */
 public class FilesOrDirectories2TarUtil {
 
     /**
-     * 把指定的文件或者目录压缩成tar包
+     * 把指定的文件或者目录归档成tar包
      *
-     * 此方法接受两个参数，needCompressedFileNamesOrPaths是需要压缩的文件或目录，此参数是一个存放String类型的List，
-     * List中可以是需要压缩的文件名，文件夹名称，带有路径的文件名，带有路径的文件夹名，也可以同时都包括。targetTarNameOrWithPathName，
+     * 此方法接受两个参数，needCompressedFileNamesOrPaths是需要归档的文件或目录，此参数是一个存放String类型的List，
+     * List中可以是需要归档的文件名，文件夹名称，带有路径的文件名，带有路径的文件夹名，也可以同时都包括。targetTarNameOrWithPathName，
      * 可以是只指定tar名字，也可以指定带路径的tar名字
-     * @param needCompressedFileNamesOrPaths 需要压缩的文件或者目录
+     * @param needCompressedFileNamesOrPaths 需要归档的文件或者目录
      * @param targetTarNameOrWithPathName 目标tar文件名或者带路径的文件名
      */
     public static void filesOrDirectories2Tar(List<String> needCompressedFileNamesOrPaths,String targetTarNameOrWithPathName) throws Exception {
         if(null == needCompressedFileNamesOrPaths || needCompressedFileNamesOrPaths.isEmpty()){
-            throw new Exception("需要压缩的文件不能为空！");
+            throw new Exception("需要归档的文件不能为空！");
         }
 
         if(null == targetTarNameOrWithPathName || targetTarNameOrWithPathName.isEmpty()){
@@ -45,7 +45,7 @@ public class FilesOrDirectories2TarUtil {
         }
         ArchiveOutputStream archiveOutputStream = new TarArchiveOutputStream(Files.newOutputStream(targetPath));
 
-        //循环需要压缩的list
+        //循环需要归档的list
         for(String fileNameOrPath : needCompressedFileNamesOrPaths){
             archive(archiveOutputStream, fileNameOrPath,"");
         }
