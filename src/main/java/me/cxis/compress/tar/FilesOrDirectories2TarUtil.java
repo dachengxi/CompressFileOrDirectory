@@ -45,15 +45,19 @@ public class FilesOrDirectories2TarUtil {
         }
         ArchiveOutputStream archiveOutputStream = new TarArchiveOutputStream(Files.newOutputStream(targetPath));
 
-        //解析需要压缩的文件或文件夹
+        //循环需要压缩的list
         for(String fileNameOrPath : needCompressedFileNamesOrPaths){
             archive(archiveOutputStream, fileNameOrPath,"");
-
-
-
         }
     }
 
+    /**
+     * 归档文件或者文件夹
+     * @param archiveOutputStream 归档文件输出流
+     * @param fileNameOrPath 需要归档的文件
+     * @param internalFilePath 归档文件内部文件存储的路径，暂时为空，指定路径的还未实现
+     * @throws IOException
+     */
     private static void archive(ArchiveOutputStream archiveOutputStream, String fileNameOrPath,String internalFilePath) throws IOException {
         Path path = Paths.get(fileNameOrPath);
         String fileName = path.getFileName().toString();
@@ -65,70 +69,58 @@ public class FilesOrDirectories2TarUtil {
                 internalFilePath += "/";
             }
 
+            //归档文件夹
             archiveDirectory(archiveOutputStream,path,internalFilePath);
         }else{
-            //文件
-            //先解析文件名和路径
-            //String filenName = path.getFileName().toString();
-            //String filePath = fileNameOrPath.substring(0,fileNameOrPath.lastIndexOf(File.separator) + 1);
             if("".equals(internalFilePath)){
                 internalFilePath += path.getFileName().toString();
             }
 
+            //归档文件
             archiveFile(archiveOutputStream, path,internalFilePath);
         }
     }
 
-    private static void archiveDirectory(final ArchiveOutputStream archiveOutputStream, final Path path,String internalFilePath) throws IOException {
+    /**
+     * 归档文件夹
+     * @param archiveOutputStream 归档文件输出流
+     * @param path 需要添加进归档文件的文件
+     * @param internalFilePath 归档文件内部路径
+     * @throws IOException
+     */
+    private static void archiveDirectory(ArchiveOutputStream archiveOutputStream, Path path,String internalFilePath) throws IOException {
         TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(path.toFile());
         tarArchiveEntry.setName(internalFilePath);
         archiveOutputStream.putArchiveEntry(tarArchiveEntry);
         archiveOutputStream.closeArchiveEntry();
 
-
         for(File file : path.toFile().listFiles()){
-            System.out.println(internalFilePath + file.getName());
+            //递归调用归档方法
             archive(archiveOutputStream,file.getPath(),internalFilePath  + file.getName());
         }
-
-        /*Files.walkFileTree(path,new SimpleFileVisitor<Path>(){
-
-
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                System.out.println(path.getFileName() + "/" + file.getFileName());
-                archive(archiveOutputStream,file.toRealPath().toString(),path.getFileName() + "/" + file.getFileName());
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                System.out.println(dir.getFileName() + "=-");
-                return FileVisitResult.SKIP_SUBTREE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                System.out.println(dir.getFileName() + "=");
-                return FileVisitResult.CONTINUE;
-            }
-        });*/
     }
 
+    /**
+     * 归档文件
+     * @param archiveOutputStream 归档文件输出流
+     * @param file 需要添加进归档文件的文件
+     * @param internalFilePath 归档文件内部路径
+     * @throws IOException
+     */
     private static void archiveFile(ArchiveOutputStream archiveOutputStream, Path file,String internalFilePath) throws IOException {
         TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(file.toFile());
         tarArchiveEntry.setName(internalFilePath);
         archiveOutputStream.putArchiveEntry(tarArchiveEntry);
-
         IOUtils.copy(Files.newInputStream(file),archiveOutputStream);
         archiveOutputStream.closeArchiveEntry();
     }
 
     public static void main(String[] args) throws Exception {
         List<String> filePathList = new ArrayList<>();
-        filePathList.add("/mos/upload/images/food/1452322008677.jpg");
-        filePathList.add("/mos/upload/images/food/14523220086772.jpg");
-        filePathList.add("/mos/upload/images/food/test");
-        filesOrDirectories2Tar( filePathList,"/mos/upload/images/food/1.tar");
+        filePathList.add("/xxx/upload/images/1452322008677.jpg");
+        filePathList.add("/xxx/upload/images/14523220086772.jpg");
+        filePathList.add("/xxx/upload/images/test");
+        filePathList.add("/xxx/");
+        filesOrDirectories2Tar( filePathList,"/xxx/upload/images/1.tar");
     }
 }
