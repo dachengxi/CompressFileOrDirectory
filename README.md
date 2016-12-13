@@ -1,7 +1,7 @@
 # CompressFileOrDirectory
 压缩文件或文件夹的工具类
 
-## FilesOrDirectories2TarUtil类
+## TarUtil类
 用于归档和解压缩tar文件
 
 ### filesOrDirectories2Tar
