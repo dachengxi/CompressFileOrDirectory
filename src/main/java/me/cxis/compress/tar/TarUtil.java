@@ -151,8 +151,10 @@ public class TarUtil {
         TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(file.toFile());
         tarArchiveEntry.setName(internalFilePath);
         archiveOutputStream.putArchiveEntry(tarArchiveEntry);
-        IOUtils.copy(Files.newInputStream(file),archiveOutputStream);
+        InputStream inputStream = Files.newInputStream(file);
+        IOUtils.copy(inputStream,archiveOutputStream);
         archiveOutputStream.closeArchiveEntry();
+        IOUtils.closeQuietly(inputStream);
     }
 
     public static void main(String[] args) throws Exception {
