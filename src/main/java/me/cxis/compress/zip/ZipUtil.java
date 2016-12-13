@@ -1,9 +1,7 @@
 package me.cxis.compress.zip;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
@@ -152,13 +150,17 @@ public class ZipUtil {
     }
 
     public static void main(String[] args) throws Exception {
+        long zipStartTime = System.currentTimeMillis();
         List<String> filePathList = new ArrayList<>();
-        filePathList.add("/xxx/upload/images/1452322008677.jpg");
-        filePathList.add("/xxx/upload/images/14523220086772.jpg");
-        filePathList.add("/xxx/upload/images/test");
-        filesOrDirectories2Zip( filePathList,"/xxx/upload/images/1.zip");
+        filePathList.add("/xxx/test");
+        filesOrDirectories2Zip( filePathList,"/xxx/test.zip");
+        long zipEndTime = System.currentTimeMillis();
+        System.out.println("zip times:" + (zipEndTime - zipStartTime));
 
-        decompressZipFile("/xxx/upload/images/1.zip","/xxx/upload/");
+        long unzipStartTime = System.currentTimeMillis();
+        decompressZipFile("/xxx/test.zip","/xxx/testunzip/");
+        long unzipEndTime = System.currentTimeMillis();
+        System.out.println("unzip times:" + (unzipEndTime - unzipStartTime));
     }
 
 
