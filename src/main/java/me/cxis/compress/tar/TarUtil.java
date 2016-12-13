@@ -16,7 +16,7 @@ import java.util.List;
  * Created by cheng.xi on 11/12/2016.
  * 文件或者文件夹归档成tar包
  */
-public class FilesOrDirectories2TarUtil {
+public class TarUtil {
 
     /**
      * 把指定的文件或者目录归档成tar包
