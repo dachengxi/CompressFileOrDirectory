@@ -48,6 +48,8 @@ public class TarUtil {
         for(String fileNameOrPath : needCompressedFileNamesOrPaths){
             archive(archiveOutputStream, fileNameOrPath,"");
         }
+
+        IOUtils.closeQuietly(archiveOutputStream);
     }
 
     /**
