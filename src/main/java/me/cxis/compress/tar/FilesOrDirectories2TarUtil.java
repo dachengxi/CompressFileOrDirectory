@@ -2,12 +2,11 @@ package me.cxis.compress.tar;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -52,6 +51,45 @@ public class FilesOrDirectories2TarUtil {
     }
 
     /**
+     * 将指定的归档文件解压到目标文件夹中
+     * @param tarFileName 需要解压的归档文件
+     * @param targetDirectory 目标文件夹
+     */
+    public static void decompressTarFile(String tarFileName,String targetDirectory) throws Exception {
+        if(null == tarFileName || tarFileName.length() == 0){
+            throw new Exception("需要解压的文件不能为空！");
+        }
+
+        Path targetDir = Paths.get(targetDirectory);
+        if(!"".equals(targetDirectory) && Files.notExists(targetDir)){
+            throw new Exception("要存放解压文件的文件夹不存在！");
+        }
+
+        //要解压的tar文件
+        Path tarFile = Paths.get(tarFileName);
+        TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(Files.newInputStream(tarFile));
+
+        TarArchiveEntry tarArchiveEntry = null;
+        while((tarArchiveEntry = tarArchiveInputStream.getNextTarEntry()) != null){
+            //是目录的先创建目录
+            if(tarArchiveEntry.isDirectory()){
+                Path dir = Paths.get(targetDirectory + tarArchiveEntry.getName());
+                Files.createDirectory(dir);
+            }else {//写文件
+                byte[] content = new byte[(int)tarArchiveEntry.getSize()];
+                OutputStream outputStream = new FileOutputStream(targetDirectory + tarArchiveEntry.getName());
+                int length = 0;
+                while((length = tarArchiveInputStream.read(content)) != -1){
+                    outputStream.write(content,0,length);
+                }
+                IOUtils.closeQuietly(outputStream);
+            }
+
+        }
+
+    }
+
+    /**
      * 归档文件或者文件夹
      * @param archiveOutputStream 归档文件输出流
      * @param fileNameOrPath 需要归档的文件
@@ -73,11 +111,13 @@ public class FilesOrDirectories2TarUtil {
             archiveDirectory(archiveOutputStream,path,internalFilePath);
         }else{
             if("".equals(internalFilePath)){
-                internalFilePath += path.getFileName().toString();
+                internalFilePath += fileName;
             }
 
             //归档文件
-            archiveFile(archiveOutputStream, path,internalFilePath);
+            if(!fileName.startsWith(".")){
+                archiveFile(archiveOutputStream, path,internalFilePath);
+            }
         }
     }
 
@@ -120,7 +160,8 @@ public class FilesOrDirectories2TarUtil {
         filePathList.add("/xxx/upload/images/1452322008677.jpg");
         filePathList.add("/xxx/upload/images/14523220086772.jpg");
         filePathList.add("/xxx/upload/images/test");
-        filePathList.add("/xxx/");
         filesOrDirectories2Tar( filePathList,"/xxx/upload/images/1.tar");
+
+        decompressTarFile("/xxx/upload/images/1.tar","/xxx/upload/");
     }
 }
