@@ -1,5 +1,6 @@
 # CompressFileOrDirectory
-压缩文件或文件夹的工具类
+用于压缩或者解压文件和文件夹的工具类。使用到的依赖是[Apache Commons Compress](http://commons.apache.org/proper/commons-compress/)和[Apache Commons IO](http://commons.apache.org/proper/commons-io/)。
+JDK版本要求是1.7以上。
 
 ## TarUtil类
 用于归档和解压缩tar文件
